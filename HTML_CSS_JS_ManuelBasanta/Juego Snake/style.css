@@ -30,7 +30,7 @@
   background-color: #21bcff;
 }
 
-#scoreboard {
+#scoreBoard {
   display: inline-flex;
 }
 
@@ -42,7 +42,7 @@
   background-color: #7ccf35;
 }
 
-.sankeSquare {
+.snakeSquare {
   background-color: #2b7fff;
 }
 
