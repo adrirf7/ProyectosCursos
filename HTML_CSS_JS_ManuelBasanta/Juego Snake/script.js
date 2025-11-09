@@ -3,9 +3,12 @@ const board = document.getElementById("board");
 const scoreBoard = document.getElementById("scoreBoard");
 const startButton = document.getElementById("start");
 const gameOverSign = document.getElementById("gameOver");
+const sizeSelector = document.getElementById("sizeSelector");
 
+const eatSounds = [new Audio("audio/c6-102822.mp3"), new Audio("audio/d6-82020.mp3"), new Audio("audio/f6-102819.mp3"), new Audio("audio/g6-82013.mp3")];
 //Game Settings
-const boardSize = 10; //tamaño del tablero
+let boardSize; //Tamaño del tablero
+
 const gameSpeed = 100; //Velocidad del juego
 const squareTypes = {
   emptySquare: 0,
@@ -32,7 +35,7 @@ const drawSnake = () => {
 };
 
 const drawSquare = (square, type) => {
-  const [row, column] = square.split(""); //Separa cada fila de cada columna de las cordenadas introducidad. Ej: coordenada (02) las separa en (0 2)
+  const [row, column] = square.split("-").map(Number); //Separa cada fila de cada columna de las cordenadas introducidad. Ej: coordenada (02) las separa en (0 2)
   boardSquares[row][column] = squareTypes[type]; //Cambia el tipo de cuadrado (estado) al que se necesite (serpiente, comida, o vacio)
   const squareElement = document.getElementById(square); //Extraemos el id del cuadrado asignado en el html al crear el board
   squareElement.setAttribute("class", `square ${type}`); //Cambiamos el tipo de ese cuadrado en el html para modificarle el color que se establecio en el css
@@ -51,31 +54,63 @@ const drawSquare = (square, type) => {
 };
 
 const moveSnake = () => {
-  const newSquare = String(Number(snake[snake.length - 1]) + directions[direction]).padStart(2, "0"); //toma la cabeza actual de la serpiente (snake.legnth -1) debibo a que como el array empieza desde 00 daria un numero superior al que corresponde
-  //Despues le suma el valor de la direccion requerida que se establecio en los parametros para asi mover la serpiente
-  //.padStart añade un 0 por delante de una cadena cuando esta es inferior a la longitud introducida
+  // Extraemos la cabeza actual de la serpiente, es decir, el último elemento del array "snake"
+  // Mediante .split("-") separamos la coordenada (por ejemplo "5-7") en [5,7]
+  // Luego usamos .map(Number) para convertir ambos valores a números (ya que .split devuelve strings)
+  const [headRow, headCol] = snake[snake.length - 1].split("-").map(Number);
 
-  const [row, column] = newSquare.split(""); //Extraemos la fila y la columna del nuevo cuadrado creado
+  // Creamos dos nuevas variables (fila y columna) que representarán la nueva posición
+  // Inicialmente son iguales a la cabeza actual
+  let newRow = headRow;
+  let newCol = headCol;
 
+  // Según la dirección actual, modificamos la fila o la columna para mover la cabeza
+  switch (direction) {
+    case "ArrowUp":
+      newRow -= 1; // Si la dirección es hacia arriba, restamos 1 a la fila
+      break;
+    case "ArrowDown":
+      newRow += 1; // Si es hacia abajo, sumamos 1 a la fila
+      break;
+    case "ArrowLeft":
+      newCol -= 1; // Si es hacia la izquierda, restamos 1 a la columna
+      break;
+    case "ArrowRight":
+      newCol += 1; // Si es hacia la derecha, sumamos 1 a la columna
+      break;
+  }
+
+  // Creamos una nueva coordenada en formato "fila-columna" (por ejemplo "4-7")
+  const newSquare = `${newRow}-${newCol}`;
+
+  // ──────────────────────────────────────────────────────────────
+  // Comprobamos si la serpiente se sale del tablero o choca consigo misma
+  // ──────────────────────────────────────────────────────────────
   if (
-    newSquare < 0 || //Si el nuevo cuadrado se genera en una posicion inferior a 0 significa que la serpiente se choco contra arriba
-    newSquare > boardSize * boardSize || //si se genera en una posicion superior a boardsize * boardSize es decir 99 significa que se choco por abajo
-    (direction === "ArrowRight" && column == 0) || //Las columnas llegan como maximo hasta 9, si la direccion de la serpiente es a la dercha y se genera en una columna que sea 0 se choco por la derecha
-    (direction === "ArrowLeft" && column == 9) || //Igual que el limite derecho pero a la inversa
-    boardSquares[row][column] === squareTypes.snakeSquare //Si el nuevo cuadrado se genero en una posicion ocupada por un square de tipo sanke significa que la serpiente se choco contra si misma
+    newRow < 0 || // Si la fila es menor que 0 → choca con el borde superior
+    newRow >= boardSize || // Si la fila supera el tamaño del tablero → choca con el borde inferior
+    newCol < 0 || // Si la columna es menor que 0 → choca con el borde izquierdo
+    newCol >= boardSize || // Si la columna supera el tamaño del tablero → choca con el borde derecho
+    boardSquares[newRow][newCol] === squareTypes.snakeSquare //Si el nuevo bloque es de tipo snake → choca contra sigo misma
   ) {
     gameOver();
   } else {
-    snake.push(newSquare); //Añadimos al array sanke el nuevo square
-    if (boardSquares[row][column] === squareTypes.foodSquare) {
-      //Si el nuevo cuadrado se genero en una posicion ocupada por comida, esta debera crecer
-      addFood();
+    snake.push(newSquare); // Si no hay colisión, añadimos el nuevo cuadrado al final del array "snake" (la nueva cabeza)
+
+    // Si el nuevo cuadrado es de tipo "foodSquare", significa que ha comido
+    if (boardSquares[newRow][newCol] === squareTypes.foodSquare) {
+      addFood(); // Llamamos a la función para aumentar la puntuación y generar nueva comida
     } else {
-      //Si el espacio donde se genero el nuevo cuadrado es un emptySquare
-      const emptySquare = snake.shift(); //con la funcion shift, extraemos el primer valor del array, y este es eliminado de este
-      drawSquare(emptySquare, "emptySquare"); //Llamamos a la funcion para dibujar un nuevo cuadrado vacio y le pasamos las coordenadas del valor extraido con el shift
+      // Si no hay comida, significa que simplemente se ha movido
+      const emptySquare = snake.shift(); // Eliminamos el primer elemento del array (la cola) para mantener la longitud
+
+      const [tailRow, tailCol] = emptySquare.split("-").map(Number);
+      const bg = (tailRow + tailCol) % 2 === 0 ? "lightSquare" : "darkSquare";
+      drawSquare(emptySquare, `emptySquare ${bg}`); // Dibujamos un cuadrado vacío en la antigua posición de la cola
     }
-    drawSnake(); //Pintamos un nuevo cuadrado de tipo snake para que esta se mueva
+
+    // Finalmente, dibujamos la serpiente actualizada con su nueva posición
+    drawSnake();
   }
 };
 
@@ -83,12 +118,18 @@ const addFood = () => {
   score++; //Aumenta el score
   updateScore(); //actualiza el score
   createRandomFood(); //Vuelve a crear un nuevo espacio con comida
+
+  //Generar sonido aleatorio al comer
+  let randomIndex = Math.floor(Math.random() * eatSounds.length);
+  eatSounds[randomIndex].play();
 };
 
 const gameOver = () => {
   gameOverSign.style.display = "block"; //Se muestra el mensaje de derrota
   clearInterval(moveInterval); //Eliminamos el intervalo para que la serpiente deje de moverse
-  startButton.disabled = false; //Se vuelve a habilitar el boton
+  //Se vuelven a habilitar los botones
+  startButton.disabled = false;
+  sizeSelector.disabled = false;
 };
 
 //Funcion para cambiar el valor que contiene la variable direccion
@@ -104,16 +145,16 @@ const directionEvent = (key) => {
     //Si cumple la condicion establecida, ejecuta la funcion y setea la direccion que el usuario pulso (key.code)
     //El switch tiene como objetivo, verificar que el usuario no este pulsando una direccion contraria a la que este yendo la serpiente. Ej: si va hacia arriba, no puede cambiar la direccion hacia abajo, si va hacia la derecha no puede cambiar la direccion hacia la izquierda, etc...
     case "ArrowUp":
-      direction != "arrowDown" && setDirection(key.code);
+      if (direction !== "ArrowDown") setDirection("ArrowUp");
       break;
     case "ArrowDown":
-      direction != "arrowUp" && setDirection(key.code);
+      if (direction !== "ArrowUp") setDirection("ArrowDown");
       break;
     case "ArrowLeft":
-      direction != "arrowRight" && setDirection(key.code);
+      if (direction !== "ArrowRight") setDirection("ArrowLeft");
       break;
     case "ArrowRight":
-      direction != "arrowLeft" && setDirection(key.code);
+      if (direction !== "ArrowLeft") setDirection("ArrowRight");
       break;
   }
 };
@@ -132,9 +173,12 @@ const createBoard = () => {
     //Recorre cada fila(row) del array y extrae su indice (rowIndex)
     row.forEach((column, columnIndex) => {
       //Recorre cada elemento(column) dentro de cada fila(row) y extrae su indice (columnIndex)
-      const squareValue = `${rowIndex}${columnIndex}`; //Creacion de una constante donde se asigan las coordenadas (valor del row + columna) (00, 01, 02, 03,...)
+      const squareValue = `${rowIndex}-${columnIndex}`; //Creacion de una constante donde se asigan las coordenadas (valor del row + columna) (00, 01, 02, 03,...)
       const squareElement = document.createElement("div"); //creacion de un div en las coordenadas segun la iteracion del forEach
-      squareElement.setAttribute("class", "square emptySquare"); //Asignacion de clase al div
+
+      const bgClass = (rowIndex + columnIndex) % 2 === 0 ? "lightSquare" : "darkSquare";
+
+      squareElement.setAttribute("class", `square emptySquare ${bgClass}`); //Asignacion de clase al div
       squareElement.setAttribute("id", squareValue); //Asignacion de un id al div con las coordenadas extraidas anteriormente
       board.appendChild(squareElement); //Agregar cada que se crea un div al board
       emptySquares.push(squareValue); //Añade al array el identificador(coordenadas) de cada cuadrado vacío recién creado: [00, 01, 02, 03, 04, 05,...]
@@ -143,7 +187,7 @@ const createBoard = () => {
 };
 
 const setGame = () => {
-  snake = ["00", "01", "02", "03"]; //Creacion inicial de la serpiente
+  snake = ["0-0", "0-1", "0-2", "0-3"]; //Creacion inicial de la serpiente
   score = snake.length; //Puntuacion es igual al largo de la serpiente
   direction = "ArrowRight"; //Movimiento inicial hacia la derecha
   boardSquares = Array.from(Array(boardSize), () => new Array(boardSize).fill(squareTypes.emptySquare)); //Creacion de un array del tamaño del tablero (10) y a cada uno de esos elementos del array se le pasa la funcion para que sean otro array, este se rellena de 0 (squareTypes.emptySquare) con .fill
@@ -156,10 +200,23 @@ const setGame = () => {
   createBoard();
 };
 
+//Ajustar el tamaño del tablero introducido por el usuairo
+const setBoardSize = (value) => {
+  boardSize = Number(value);
+  board.style.gridTemplateColumns = `repeat(${value}, 1fr)`;
+};
+
 const startGame = () => {
+  //Extraer el valor del tamaño del tablero e introducirlo como argumento en la funcion
+  const selectedSize = sizeSelector.value;
+  setBoardSize(selectedSize);
+
   setGame();
   gameOverSign.style.display = "none"; //Resetear el display del game over para cuando se juega mas de 1 partida consecutiva
-  startButton.disabled = true; //Desabilitar el boton de start mientras esta jugando el usuario
+  //Desabilitar el botones mientras esta jugando el usuario
+  startButton.disabled = true;
+  sizeSelector.disabled = true;
+
   drawSnake();
   updateScore();
   createRandomFood();

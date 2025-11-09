@@ -1,6 +1,18 @@
 * {
   font-family: "Share Tech Mono", monospace;
 }
+body {
+  margin: 0; /* elimina márgenes por defecto */
+  height: 100vh; /* ocupa toda la altura de la pantalla */
+  display: flex;
+  justify-content: center; /* centra horizontalmente */
+  align-items: center; /* centra verticalmente */
+}
+
+.container {
+  width: 500px;
+  height: 500px;
+}
 
 #board,
 .boardInfo {
@@ -38,8 +50,12 @@
   aspect-ratio: 1;
 }
 
-.emptySquare {
+.lightSquare {
   background-color: #7ccf35;
+}
+
+.darkSquare {
+  background-color: #76c433;
 }
 
 .snakeSquare {

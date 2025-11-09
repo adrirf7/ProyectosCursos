@@ -11,14 +11,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <div id="board"></div>
-    <div class="boardInfo">
-      <div>
-        Score:
-        <div id="scoreBoard"></div>
+    <div class="container">
+      <div id="board"></div>
+      <div class="boardInfo">
+        <div>
+          Score:
+          <div id="scoreBoard"></div>
+        </div>
+        <button id="start">Start</button>
       </div>
-      <button id="start">Start</button>
+      <div id="gameOver">Game Over</div>
+      <select id="sizeSelector">
+        <option value="10" disabled>---Set Board Size---</option>
+        <option value="10" selected>Small</option>
+        <option value="20">Medium</option>
+        <option value="30">Big</option>
+      </select>
     </div>
-    <div id="gameOver">Game Over</div>
   </body>
 </html>
