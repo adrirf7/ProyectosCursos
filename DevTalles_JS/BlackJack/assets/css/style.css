@@ -1,0 +1,32 @@
+html,
+body {
+  margin: 0px;
+  background-color: #2f4f30;
+  color: white;
+}
+
+.title {
+  text-align: center;
+  background-color: black;
+  color: white;
+  padding: 10px;
+  font-size: 25px;
+}
+
+.game-card {
+  position: relative;
+  width: 150px;
+  left: 100px;
+  margin-left: -75px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+#dealer-cards,
+#player-cards {
+  height: 280px;
+}
+
+.game-points {
+  margin-bottom: 20px;
+}
