@@ -7,15 +7,15 @@ const letterCards = ["A", "J", "Q", "K"]; //Cartas que no contienen numeros
 const createDeck = () => {
   // Crear las cartas del 2 al 10
   for (let i = 2; i <= 10; i++) {
-    for (let k = 0; k < suits.length; k++) {
-      deck.push(i + suits[k]);
+    for (let suit of suits) {
+      deck.push(i + suit);
     }
   }
 
   //Crear las cartas especiales (As, Caballo, Reina y Rey)
-  for (let i = 0; i < suits.length; i++) {
-    for (let k = 0; k < letterCards.length; k++) {
-      deck.push(letterCards[i] + suits[k]);
+  for (let suit of suits) {
+    for (let letterCard of letterCards) {
+      deck.push(letterCard + suit);
     }
   }
 
@@ -36,11 +36,13 @@ const takeCard = () => {
 
 //Extraer el valor de la carta
 const cardValue = (card) => {
-  //Los estrings en js pueden ser tratados como arrays. Substring extre el valor de la carta desde la posicion establecida (0) hasta la ultima posicion de la carta -1. Que seria siempre el palo
+  //Los strings en js pueden ser tratados como arrays. Substring extre el valor de la carta desde la posicion establecida, en este caso 0, hasta la ultima posicion de la carta -1. Que seria siempre el palo
   const value = card.substring(0, card.length - 1);
 
   return (points = isNaN(value) ? (value === "A" ? 11 : 10) : parseInt(value));
 };
 
 console.log(createDeck());
-console.log(cardValue(takeCard()));
+const carta = takeCard();
+console.log(carta);
+console.log(cardValue(carta));
