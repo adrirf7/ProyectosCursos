@@ -1,80 +1,174 @@
-let deck = []; //Baraja
+const blackJack = (() => {
+  "use strict";
 
-const suits = ["H", "D", "C", "S"]; //Palos de la baraja
-const letterCards = ["A", "J", "Q", "K"]; //Cartas que no contienen numeros
+  let deck = []; //Baraja
 
-//*Variables del juego
-let playerPoints = 0,
-  dealerPoints = 0,
-  ascesCount = 0;
+  const suits = ["H", "D", "C", "S"], //Palos de la baraja
+    letterCards = ["A", "J", "Q", "K"]; //Cartas que no contienen numeros
 
-//* Elementos del HTML
-const btnTake = document.querySelector("#btn-take");
-const HTMLplayerPoints = document.querySelector("#player-points");
-const HTMLdealerPoints = document.querySelector("#dealer-points");
+  //*Variables del juego
+  // let playerPoints = 0,
+  //   dealerPoints = 0;
+  let playerPoints = [],
+    dealer;
 
-const HTMLplayerCards = document.querySelector("#player-cards");
+  let playerAsces = 0,
+    dealerAces = 0;
 
-//*Crear la baraja ya mezclada
-const createDeck = () => {
-  // Crear las cartas del 2 al 10
-  for (let i = 2; i <= 10; i++) {
+  //* Elementos del HTML
+
+  const btnNewGame = document.querySelector("#btn-new-game"),
+    btnTake = document.querySelector("#btn-take"),
+    btnStop = document.querySelector("#btn-stop");
+
+  const HTMLplayersPoints = document.querySelectorAll("#players-points");
+
+  const cardsDiv = document.querySelectorAll(".div-cards");
+
+  const startGame = (players = 2) => {
+    deck = createDeck();
+    playerPoints = [];
+
+    for (let i = 0; i < players; i++) {
+      playerPoints.push(0);
+    }
+    dealer = playerPoints.length - 1;
+
+    //Resetar variables el juego
+    playerAsces = 0;
+    dealerAces = 0;
+
+    //Limpiar el html
+    HTMLplayersPoints.forEach((elem) => (elem.innerHTML = 0));
+
+    cardsDiv.forEach((elem) => (elem.innerHTML = ""));
+
+    btnTake.disabled = false;
+    btnStop.disabled = false;
+  };
+
+  //*Crear la baraja ya mezclada
+  const createDeck = () => {
+    deck = []; //Reiniclializar la baraja
+
+    // Crear las cartas del 2 al 10
+    for (let i = 2; i <= 10; i++) {
+      for (let suit of suits) {
+        deck.push(i + suit);
+      }
+    }
+
+    //Crear las cartas especiales (As, Caballo, Reina y Rey)
     for (let suit of suits) {
-      deck.push(i + suit);
+      for (let letterCard of letterCards) {
+        deck.push(letterCard + suit);
+      }
     }
-  }
 
-  //Crear las cartas especiales (As, Caballo, Reina y Rey)
-  for (let suit of suits) {
-    for (let letterCard of letterCards) {
-      deck.push(letterCard + suit);
+    return _.shuffle(deck); //Mezclar la baraja
+  };
+
+  //*Tomar una carta
+  const takeCard = () => {
+    //Verifica si la baraja no esta vacia y extrae el ultimo valor de la baraja
+    return deck.length === 0 ? alert("No quedan cartas en la baraja") : deck.pop();
+  };
+
+  //*Extraer el valor de la carta
+  const cardValue = (card) => {
+    //Los strings en js pueden ser tratados como arrays. Substring extre el valor de la carta desde la posicion establecida, en este caso 0, hasta la ultima posicion de la carta -1. Que seria siempre el palo
+    const value = card.substring(0, card.length - 1);
+
+    //Si no es un numero solo hay dos opciones As o Figura. El as incialemnte vale 11, y las figuras 10. Si es numero devuelve el valor de la carta
+    return isNaN(value) ? (value === "A" ? 11 : 10) : parseInt(value);
+  };
+
+  //Turno: 0 = primer jugador y el ultimo el dealer
+  const accumulatePoints = (card, turn) => {
+    let thisValue = cardValue(card);
+    //Aumentar contador ases
+    if (thisValue === 11) dealerAces++;
+    playerPoints[turn] += thisValue;
+
+    //Siempre que el jugador supere 21 y tenga algun as en la mano, este necesitara que valga 1 y no 11, para ello se le restara 10 a los puntos del jugador y quita el as del contador
+    while (playerPoints[turn] > 21 && dealerAces > 0) {
+      playerPoints[turn] -= 10;
+      dealerAces--;
     }
-  }
 
-  deck = _.shuffle(deck); //Mezclar la baraja
-  return deck;
-};
+    HTMLplayersPoints[turn].innerHTML = playerPoints[turn]; //Insertar los puntos
+    return playerPoints[turn];
+  };
 
-//*Tomar una carta
-const takeCard = () => {
-  //Verifica si la baraja esta vacia
-  if (deck.length === 0) {
-    alert("No quedan cartas en la baraja");
-  }
+  const createCard = (card, turn) => {
+    //Establecer la iamgen de la carta
+    const cardImg = document.createElement("img");
+    cardImg.src = `assets/cartas/${card}.png`;
+    cardImg.classList.add("game-card");
+    cardsDiv[turn].append(cardImg); //Insertar la imagen
+  };
 
-  //Extraer la ultima carta de la baraja
-  return deck.pop();
-};
+  const whoswhinner = () => {
+    const [minPoints, dealerPoints] = playerPoints;
 
-//*Extraer el valor de la carta
-const cardValue = (card) => {
-  //Los strings en js pueden ser tratados como arrays. Substring extre el valor de la carta desde la posicion establecida, en este caso 0, hasta la ultima posicion de la carta -1. Que seria siempre el palo
-  const value = card.substring(0, card.length - 1);
+    console.log(minPoints, dealerPoints);
+    setTimeout(() => {
+      if (dealerPoints > minPoints && dealerPoints <= 21) {
+        alert("Perdiste");
+      } else if (dealerPoints === minPoints) {
+        alert("Empate");
+      } else {
+        alert("Ganaste");
+      }
+    }, 100);
+  };
 
-  //Si no es un numero solo hay dos opciones As o Figura. El as incialemnte vale 11, y las figuras 10. Si es numero devuelve el valor de la carta
-  return isNaN(value) ? (value === "A" ? 11 : 10) : parseInt(value);
-};
+  const dealerTurn = (minPoints) => {
+    let dealerPoints = 0;
 
-//? Eventos De los botones
+    do {
+      const card = takeCard();
+      dealerPoints = accumulatePoints(card, dealer);
+      createCard(card, dealer);
+    } while (dealerPoints < minPoints && minPoints <= 21);
 
-//*Tomar una carta
-btnTake.addEventListener("click", () => {
-  const card = takeCard();
-  let thisValue = cardValue(card);
+    whoswhinner();
+  };
 
-  //Aumentar contador ases
-  if (thisValue === 11) ascesCount++;
-  playerPoints += thisValue;
+  //? Eventos De los botones
 
-  //Siempre que el jugador supere 21 y tenga algun as en la mano, este necesitara que valga 1 y no 11, para ello se le restara 10 a los puntos del jugador y quita el as del contador
-  while (playerPoints > 21 && ascesCount > 0) {
-    playerPoints -= 10;
-    ascesCount--;
-  }
+  //*Tomar una carta
+  btnTake.addEventListener("click", () => {
+    const card = takeCard();
+    const points = accumulatePoints(card, 0);
 
-  HTMLplayerPoints.innerHTML = playerPoints;
-  HTMLplayerCards.innerHTML += `<img class="game-card" src="assets/cartas/${card}.png" />`;
-  console.log(card, playerPoints);
-});
+    createCard(card, 0);
 
-console.log(createDeck());
+    if (playerPoints[0] > 21) {
+      btnTake.disabled = true;
+      btnStop.disabled = true;
+      dealerTurn(playerPoints[0]);
+    } else if (playerPoints[0] === 21) {
+      btnTake.disabled = true;
+      btnStop.disabled = true;
+      dealerTurn(playerPoints[0]);
+    }
+  });
+
+  //* Detener
+  btnStop.addEventListener("click", () => {
+    btnTake.disabled = true;
+    btnStop.disabled = true;
+    dealerTurn(playerPoints[0]);
+  });
+
+  //* Nuevo Juego
+  btnNewGame.addEventListener("click", () => {
+    startGame();
+  });
+
+  //Esto es una forma de declarar metodos publicos. Estos peuden ser utilizados desde otros archivos. Es importante que todo nuestro flujo este dentro de la funcion anonima autoinvocada. Ademas a esta le hemos añadido el nombre de "blackJack" para que pueda ser identificada con ese nombre. Importante tambien que se le ha asignado otro nombre al metodo startGame como newGame
+  return {
+    newGame: startGame,
+  };
+})();

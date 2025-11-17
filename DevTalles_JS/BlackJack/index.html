@@ -18,29 +18,31 @@
 
     <div class="mt-2">
       <div id="buttons" class="col text-center">
-        <buttons class="btn btn-danger">Nuevo juego</buttons>
-        <buttons id="btn-take" class="btn btn-secondary">Pedir carta</buttons>
-        <buttons class="btn btn-success">Detener</buttons>
+        <button id="btn-new-game" class="btn btn-danger">Nuevo juego</button>
+        <button id="btn-take" disabled="disabled" class="btn btn-secondary">Pedir carta</button>
+        <button id="btn-stop" disabled="disabled" class="btn btn-success">Detener</button>
       </div>
     </div>
 
     <div class="container">
       <div class="col">
-        <h1 class="game-points">Jugador 1 - <small id="player-points">0</small></h1>
-        <div id="player-cards"></div>
+        <h1 class="game-points">Jugador 1 - <small id="players-points">0</small></h1>
+        <div id="player-cards" class="div-cards"></div>
       </div>
     </div>
 
     <div class="container">
       <div class="col">
-        <h1 class="game-points">Dealer - <small id="dealer-points">0</small></h1>
-        <div id="dealer-cards">
-          <img class="game-card" src="assets/cartas/3H.png" />
-        </div>
+        <h1 class="game-points">Dealer - <small id="players-points">0</small></h1>
+        <div id="dealer-cards" class="div-cards"></div>
       </div>
     </div>
 
     <script src="assets/js/underscore-min.js"></script>
     <script src="assets/js/game.js"></script>
+
+    <script>
+      console.log(blackJack);
+    </script>
   </body>
 </html>
