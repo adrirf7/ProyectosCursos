@@ -7,8 +7,6 @@ const blackJack = (() => {
     letterCards = ["A", "J", "Q", "K"]; //Cartas que no contienen numeros
 
   //*Variables del juego
-  // let playerPoints = 0,
-  //   dealerPoints = 0;
   let playerPoints = [],
     dealer;
 
@@ -16,22 +14,25 @@ const blackJack = (() => {
     dealerAces = 0;
 
   //* Elementos del HTML
-
+  //Botones
   const btnNewGame = document.querySelector("#btn-new-game"),
     btnTake = document.querySelector("#btn-take"),
     btnStop = document.querySelector("#btn-stop");
-
+  //Puntos
   const HTMLplayersPoints = document.querySelectorAll("#players-points");
-
+  //Imagnes de las cartas
   const cardsDiv = document.querySelectorAll(".div-cards");
 
+  //* Empezar la partida
   const startGame = (players = 2) => {
-    deck = createDeck();
-    playerPoints = [];
+    deck = createDeck(); //Crear la baraja
+    playerPoints = []; //vaciar los puntos
 
+    //Llenar el array con los jugadores deseados
     for (let i = 0; i < players; i++) {
       playerPoints.push(0);
     }
+    //El dealer siempre sera el ultimo jugador
     dealer = playerPoints.length - 1;
 
     //Resetar variables el juego
@@ -40,9 +41,9 @@ const blackJack = (() => {
 
     //Limpiar el html
     HTMLplayersPoints.forEach((elem) => (elem.innerHTML = 0));
-
     cardsDiv.forEach((elem) => (elem.innerHTML = ""));
 
+    //Rehabilitar botones
     btnTake.disabled = false;
     btnStop.disabled = false;
   };
@@ -83,6 +84,7 @@ const blackJack = (() => {
     return isNaN(value) ? (value === "A" ? 11 : 10) : parseInt(value);
   };
 
+  //* Sumar Puntos
   //Turno: 0 = primer jugador y el ultimo el dealer
   const accumulatePoints = (card, turn, pAsces) => {
     let thisValue = cardValue(card);
@@ -100,6 +102,7 @@ const blackJack = (() => {
     return playerPoints[turn];
   };
 
+  //* Crear la imagen de la carta
   const createCard = (card, turn) => {
     //Establecer la iamgen de la carta
     const cardImg = document.createElement("img");
@@ -108,6 +111,7 @@ const blackJack = (() => {
     cardsDiv[turn].append(cardImg); //Insertar la imagen
   };
 
+  //* Determinar un ganador
   const whoswhinner = () => {
     const [minPoints, dealerPoints] = playerPoints;
 
@@ -123,10 +127,9 @@ const blackJack = (() => {
         alert("No Controlado");
       }
     }, 100);
-
-    dealerPoints > minPoints && dealerPoints <= 21;
   };
 
+  //* Detener al jugador una vez supera 21
   const stopAt21 = (pPoints) => {
     if (pPoints > 21) {
       btnTake.disabled = true;
@@ -139,6 +142,7 @@ const blackJack = (() => {
     }
   };
 
+  //* Turno del dealer
   const dealerTurn = (minPoints) => {
     let dealerPoints = 0;
 
