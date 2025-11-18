@@ -84,16 +84,16 @@ const blackJack = (() => {
   };
 
   //Turno: 0 = primer jugador y el ultimo el dealer
-  const accumulatePoints = (card, turn) => {
+  const accumulatePoints = (card, turn, pAsces) => {
     let thisValue = cardValue(card);
     //Aumentar contador ases
-    if (thisValue === 11) dealerAces++;
+    if (thisValue === 11) pAsces++;
     playerPoints[turn] += thisValue;
 
     //Siempre que el jugador supere 21 y tenga algun as en la mano, este necesitara que valga 1 y no 11, para ello se le restara 10 a los puntos del jugador y quita el as del contador
-    while (playerPoints[turn] > 21 && dealerAces > 0) {
+    while (playerPoints[turn] > 21 && pAsces > 0) {
       playerPoints[turn] -= 10;
-      dealerAces--;
+      pAsces--;
     }
 
     HTMLplayersPoints[turn].innerHTML = playerPoints[turn]; //Insertar los puntos
@@ -113,14 +113,30 @@ const blackJack = (() => {
 
     console.log(minPoints, dealerPoints);
     setTimeout(() => {
-      if (dealerPoints > minPoints && dealerPoints <= 21) {
+      if ((dealerPoints > minPoints && dealerPoints <= 21) || minPoints > 21) {
         alert("Perdiste");
       } else if (dealerPoints === minPoints) {
         alert("Empate");
-      } else {
+      } else if (minPoints > dealerPoints || (minPoints <= 21 && dealerPoints > 21)) {
         alert("Ganaste");
+      } else {
+        alert("No Controlado");
       }
     }, 100);
+
+    dealerPoints > minPoints && dealerPoints <= 21;
+  };
+
+  const stopAt21 = (pPoints) => {
+    if (pPoints > 21) {
+      btnTake.disabled = true;
+      btnStop.disabled = true;
+      dealerTurn(pPoints);
+    } else if (pPoints === 21) {
+      btnTake.disabled = true;
+      btnStop.disabled = true;
+      dealerTurn(pPoints);
+    }
   };
 
   const dealerTurn = (minPoints) => {
@@ -128,7 +144,7 @@ const blackJack = (() => {
 
     do {
       const card = takeCard();
-      dealerPoints = accumulatePoints(card, dealer);
+      dealerPoints = accumulatePoints(card, dealer, dealerAces);
       createCard(card, dealer);
     } while (dealerPoints < minPoints && minPoints <= 21);
 
@@ -140,19 +156,9 @@ const blackJack = (() => {
   //*Tomar una carta
   btnTake.addEventListener("click", () => {
     const card = takeCard();
-    const points = accumulatePoints(card, 0);
-
+    const points = accumulatePoints(card, 0, playerAsces);
     createCard(card, 0);
-
-    if (playerPoints[0] > 21) {
-      btnTake.disabled = true;
-      btnStop.disabled = true;
-      dealerTurn(playerPoints[0]);
-    } else if (playerPoints[0] === 21) {
-      btnTake.disabled = true;
-      btnStop.disabled = true;
-      dealerTurn(playerPoints[0]);
-    }
+    stopAt21(points);
   });
 
   //* Detener
