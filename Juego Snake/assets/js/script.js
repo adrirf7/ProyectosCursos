@@ -5,7 +5,12 @@ const startButton = document.getElementById("start");
 const gameOverSign = document.getElementById("gameOver");
 const sizeSelector = document.getElementById("sizeSelector");
 
-const eatSounds = [new Audio("audio/c6-102822.mp3"), new Audio("audio/d6-82020.mp3"), new Audio("audio/f6-102819.mp3"), new Audio("audio/g6-82013.mp3")];
+const eatSounds = [
+  new Audio("assets/audio/c6-102822.mp3"),
+  new Audio("assets/audio/d6-82020.mp3"),
+  new Audio("assets/audio/f6-102819.mp3"),
+  new Audio("assets/audio/g6-82013.mp3"),
+];
 //Game Settings
 let boardSize; //Tamaño del tablero
 
