@@ -1,5 +1,4 @@
-import { takeCard } from "./take-card";
-import { accumulatePoints } from "./accumulate-points";
+import { accumulatePoints, takeCard } from "./index";
 import { createCard } from "../index";
 import { whosWhinner } from "../index";
 

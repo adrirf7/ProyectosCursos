@@ -1,5 +1,5 @@
 import _ from "underscore";
-import { createDeck, takeCard, dealerTurn, accumulatePoints } from "./usecases/index";
+import { createDeck, takeCard, dealerTurn, accumulatePoints, stopAt21 } from "./usecases/index";
 
 //Baraja
 let deck;
@@ -13,7 +13,7 @@ let playerAces = 0,
 
 //* Elementos del HTML
 //Botones
-const btnNewGame = document.querySelector("#btn-new-game"),
+export const btnNewGame = document.querySelector("#btn-new-game"),
   btnTake = document.querySelector("#btn-take"),
   btnStop = document.querySelector("#btn-stop");
 //Puntos
@@ -74,15 +74,6 @@ export const whosWhinner = () => {
   }, 100);
 };
 
-//* Detener al jugador una vez supera 21
-const stopAt21 = (points) => {
-  if (points > 21 || points === 21) {
-    btnTake.disabled = true;
-    btnStop.disabled = true;
-    dealerTurn(points, deck, dealer, dealerAces, playerPoints);
-  }
-};
-
 //? Eventos De los botones
 
 //*Tomar una carta
@@ -92,7 +83,7 @@ btnTake.addEventListener("click", () => {
 
   playerAces = result.pAces;
   createCard(card, 0);
-  stopAt21(result.points);
+  stopAt21(result.points, deck, dealer, dealerAces, playerPoints);
 });
 
 //* Detener
