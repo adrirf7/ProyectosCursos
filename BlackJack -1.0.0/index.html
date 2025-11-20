@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BlackJack</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body>
+    <header class="title">BlackJack</header>
+
+    <div class="mt-2">
+      <div id="buttons" class="col text-center">
+        <button id="btn-new-game" class="btn btn-danger">Nuevo juego</button>
+        <button id="btn-take" disabled="disabled" class="btn btn-secondary">Pedir carta</button>
+        <button id="btn-stop" disabled="disabled" class="btn btn-success">Detener</button>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="col">
+        <h1 class="game-points">Jugador 1 - <small id="players-points">0</small></h1>
+        <div id="player-cards" class="div-cards"></div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="col">
+        <h1 class="game-points">Dealer - <small id="players-points">0</small></h1>
+        <div id="dealer-cards" class="div-cards"></div>
+      </div>
+    </div>
+
+    <script src="assets/js/underscore-min.js"></script>
+    <script src="assets/js/game-min.js"></script>
+
+    <script>
+      console.log(blackJack);
+    </script>
+  </body>
+</html>
