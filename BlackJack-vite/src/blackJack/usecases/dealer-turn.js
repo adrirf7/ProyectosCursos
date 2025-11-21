@@ -1,6 +1,4 @@
-import { accumulatePoints, takeCard } from "./index";
-import { createCard } from "../index";
-import { whosWhinner } from "../index";
+import { accumulatePoints, takeCard, createCard } from "./index";
 
 /**
  *
@@ -26,5 +24,22 @@ export const dealerTurn = (minPoints, deck, dealer, dealerAces, playerPoints) =>
     createCard(card, dealer);
   } while (dealerPoints < minPoints && minPoints <= 21);
 
-  whosWhinner();
+  whosWhinner(playerPoints);
+};
+
+//* Determinar un ganador
+export const whosWhinner = (playerPoints) => {
+  const [minPoints, dealerPoints] = playerPoints;
+
+  setTimeout(() => {
+    if ((dealerPoints > minPoints && dealerPoints <= 21) || minPoints > 21) {
+      alert("Perdiste");
+    } else if (dealerPoints === minPoints) {
+      alert("Empate");
+    } else if (minPoints > dealerPoints || (minPoints <= 21 && dealerPoints > 21)) {
+      alert("Ganaste");
+    } else {
+      alert("No Controlado");
+    }
+  }, 100);
 };

@@ -4,3 +4,5 @@ export { cardValue } from "./card-value";
 export { dealerTurn } from "./dealer-turn";
 export { accumulatePoints } from "./accumulate-points";
 export { stopAt21 } from "./stop-at-21";
+export { createCard } from "./create-card";
+export { startGame } from "./start-game";
