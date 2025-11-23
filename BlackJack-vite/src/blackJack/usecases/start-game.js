@@ -1,5 +1,5 @@
 import { HTMLplayersPoints, btnTake, btnStop, cardsDiv } from "..";
-import { createDeck } from "./create-deck";
+import { createDeck, takeCard, createCard, accumulatePoints } from "./index";
 
 /**
  *
@@ -35,5 +35,31 @@ export const startGame = (players = 2, deck, playerPoints, dealer, playerAces, d
   btnTake.disabled = false;
   btnStop.disabled = false;
 
-  return { playerPoints, deck, dealer };
+  //Repartir dos cartas al jugador
+  for (let i = 0; i < 2; i++) {
+    const card = takeCard(deck);
+    const result = accumulatePoints(card, 0, playerAces, playerPoints);
+
+    playerAces = result.pAces;
+
+    createCard(card, 0, 1);
+  }
+
+  let hiddenCard = null;
+  //Repartir dos cartas al jugador
+  for (let i = 0; i < 2; i++) {
+    const card = takeCard(deck);
+    const result = accumulatePoints(card, 1, dealerAces, playerPoints);
+
+    dealerAces = result.pAces;
+
+    if (i === 1) {
+      createCard(card, 1, 0);
+      hiddenCard = card;
+    } else {
+      createCard(card, 1, 1);
+    }
+  }
+
+  return { playerPoints, deck, dealer, playerAces, dealerAces, hiddenCard };
 };

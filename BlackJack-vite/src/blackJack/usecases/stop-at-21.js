@@ -10,10 +10,10 @@ import { dealerTurn } from "./index";
  * @param {Array<Number>} playerPoints
  */
 //* Detener al jugador una vez supera 21
-export const stopAt21 = (points, deck, dealer, dealerAces, playerPoints) => {
+export const stopAt21 = (points, deck, dealer, dealerAces, playerPoints, dealerHiddenCard) => {
   if (points > 21 || points === 21) {
     btnTake.disabled = true;
     btnStop.disabled = true;
-    dealerTurn(points, deck, dealer, dealerAces, playerPoints);
+    dealerTurn(points, deck, dealer, dealerAces, playerPoints, dealerHiddenCard);
   }
 };

@@ -1,4 +1,6 @@
 import { accumulatePoints, takeCard, createCard } from "./index";
+import { cardsDiv } from "..";
+import { min } from "underscore";
 
 /**
  *
@@ -8,21 +10,27 @@ import { accumulatePoints, takeCard, createCard } from "./index";
  * @param {Number} dealerAces
  */
 //* Turno del dealer
-export const dealerTurn = (minPoints, deck, dealer, dealerAces, playerPoints) => {
+export const dealerTurn = (minPoints, deck, dealer, dealerAces, playerPoints, dealerHiddenCard) => {
   if (!minPoints) throw new Error("minPoints es un argumento obligatorio");
   if (!deck || deck.length === 0) throw new Error("deck es obligatorio como un array de string");
   if (!dealer) throw new Error("dealer es un argumento obligatorio");
-  if (!!dealerAces) throw new Error("dealerAces es un argumento obligatorio");
+  if (dealerAces === null || dealerAces === undefined) throw new Error("dealerAces es un argumento obligatorio");
 
-  let dealerPoints = 0;
+  let dealerPoints = playerPoints[dealer];
 
-  do {
+  if (dealerHiddenCard) {
+    const dealerCards = cardsDiv[dealer].querySelectorAll(".game-card");
+    const lastCard = dealerCards[dealerCards.length - 1];
+    lastCard.src = `assets/cartas/${dealerHiddenCard}.png`;
+  }
+
+  while (dealerPoints < minPoints && minPoints <= 21) {
     const card = takeCard(deck);
     const result = accumulatePoints(card, dealer, dealerAces, playerPoints);
     dealerPoints = result.points;
     dealerAces = result.pAces;
     createCard(card, dealer);
-  } while (dealerPoints < minPoints && minPoints <= 21);
+  }
 
   whosWhinner(playerPoints);
 };

@@ -10,7 +10,8 @@ let playerPoints = [],
 
 let playerAces = 0,
   dealerAces = 0,
-  players = 2;
+  players = 2,
+  dealerHiddenCard = null;
 
 //* Elementos del HTML
 //Botones
@@ -30,6 +31,10 @@ btnNewGame.addEventListener("click", () => {
   deck = newGame.deck;
   playerPoints = newGame.playerPoints;
   dealer = newGame.dealer;
+  playerAces = newGame.playerAces;
+  dealerAces = newGame.dealerAces;
+  dealerHiddenCard = newGame.hiddenCard;
+  console.log(dealerHiddenCard);
 });
 
 //*Tomar una carta
@@ -39,12 +44,12 @@ btnTake.addEventListener("click", () => {
 
   playerAces = result.pAces;
   createCard(card, 0);
-  stopAt21(result.points, deck, dealer, dealerAces, playerPoints);
+  stopAt21(result.points, deck, dealer, dealerAces, playerPoints, dealerHiddenCard);
 });
 
 //* Detener
 btnStop.addEventListener("click", () => {
   btnTake.disabled = true;
   btnStop.disabled = true;
-  dealerTurn(playerPoints[0], deck, dealer, dealerAces, playerPoints);
+  dealerTurn(playerPoints[0], deck, dealer, dealerAces, playerPoints, dealerHiddenCard);
 });
