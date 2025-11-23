@@ -29,5 +29,6 @@ export const accumulatePoints = (card, turn, pAces, playerPoints) => {
   }
 
   HTMLplayersPoints[turn].innerHTML = playerPoints[turn]; //Insertar los puntos
+
   return { points: playerPoints[turn], pAces };
 };

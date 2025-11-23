@@ -23,3 +23,14 @@ export const createDeck = () => {
 
   return _.shuffle(deck); //Mezclar la baraja
 };
+
+export const createFaceDownDeck = () => {
+  const deckContainer = document.querySelector("#deck-container");
+
+  for (let i = 0; i < 10; i++) {
+    const faceCardImg = document.createElement("img");
+    faceCardImg.src = `./public/assets/cartas/red_back.png`;
+    faceCardImg.classList.add("game-card");
+    deckContainer.append(faceCardImg);
+  }
+};

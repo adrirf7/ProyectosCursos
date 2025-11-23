@@ -1,6 +1,5 @@
 import { accumulatePoints, takeCard, createCard } from "./index";
-import { cardsDiv } from "..";
-import { min } from "underscore";
+import { cardsDiv, HTMLdealerPoints } from "..";
 
 /**
  *
@@ -16,6 +15,10 @@ export const dealerTurn = (minPoints, deck, dealer, dealerAces, playerPoints, de
   if (!dealer) throw new Error("dealer es un argumento obligatorio");
   if (dealerAces === null || dealerAces === undefined) throw new Error("dealerAces es un argumento obligatorio");
 
+  // Mostrar los puntos del dealer
+  HTMLdealerPoints.style.display = "inline";
+  HTMLdealerPoints.innerHTML = playerPoints[dealer];
+
   let dealerPoints = playerPoints[dealer];
 
   if (dealerHiddenCard) {
@@ -30,6 +33,9 @@ export const dealerTurn = (minPoints, deck, dealer, dealerAces, playerPoints, de
     dealerPoints = result.points;
     dealerAces = result.pAces;
     createCard(card, dealer);
+
+    // Actualizar los puntos del dealer en pantalla
+    HTMLdealerPoints.innerHTML = dealerPoints;
   }
 
   whosWhinner(playerPoints);
@@ -41,13 +47,13 @@ export const whosWhinner = (playerPoints) => {
 
   setTimeout(() => {
     if ((dealerPoints > minPoints && dealerPoints <= 21) || minPoints > 21) {
-      alert("Perdiste");
+      document.getElementById("overlay-lose").style.display = "flex";
     } else if (dealerPoints === minPoints) {
-      alert("Empate");
+      document.getElementById("overlay-tie").style.display = "flex";
     } else if (minPoints > dealerPoints || (minPoints <= 21 && dealerPoints > 21)) {
-      alert("Ganaste");
+      document.getElementById("overlay-win").style.display = "flex";
     } else {
       alert("No Controlado");
     }
-  }, 100);
+  }, 700);
 };

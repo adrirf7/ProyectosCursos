@@ -12,31 +12,80 @@
       integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
       crossorigin="anonymous"
     />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Zalando+Sans+Expanded:ital,wght@0,200..900;1,200..900&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <header class="title">BlackJack</header>
+    <header class="title">♣♥ BLACKJACK ♠♦</header>
 
     <div class="mt-2">
-      <div id="buttons" class="col text-center">
+      <div id="buttons" class="col text-center mt-4">
         <button id="btn-new-game" class="btn btn-danger">Nuevo juego</button>
-        <button id="btn-take" disabled="disabled" class="btn btn-secondary">Pedir carta</button>
-        <button id="btn-stop" disabled="disabled" class="btn btn-success">Detener</button>
       </div>
     </div>
 
-    <div class="container">
-      <div class="col">
-        <h1 class="game-points">Jugador 1 - <small id="players-points">0</small></h1>
+    <div class="container mt-3">
+      <div class="col text-center">
+        <h1 class="game-points">Jugador <small id="players-points"> 0</small></h1>
         <div id="player-cards" class="div-cards"></div>
+        <div class="player-buttons">
+          <button id="btn-take" disabled="disabled" class="btn btn-secondary">Pedir carta</button>
+          <button id="btn-stop" disabled="disabled" class="btn btn-success">Detener</button>
+        </div>
       </div>
     </div>
 
-    <div class="container">
-      <div class="col">
-        <h1 class="game-points">Dealer - <small id="players-points">0</small></h1>
-        <div id="dealer-cards" class="div-cards"></div>
+    <div class="container mt-4">
+      <div class="row align-items-center g-4">
+        <div class="col-8 text-center">
+          <h1 class="game-points">Dealer <small id="players-points" class="dealer-points" style="display: none">0</small></h1>
+          <div id="dealer-cards" class="div-cards"></div>
+        </div>
+
+        <div class="col-4 d-flex justify-content-center">
+          <div id="deck-container" class="div-cards"></div>
+        </div>
       </div>
     </div>
+
+    <!-- Overlay de Victoria -->
+    <div id="overlay-win" class="game-overlay" style="display: none">
+      <div class="overlay-content">
+        <h1 class="overlay-title win">¡GANASTE!</h1>
+        <p class="overlay-subtitle">Felicidades, has vencido al dealer</p>
+        <button class="btn btn-danger btn-lg mt-3" onclick="document.querySelector('#btn-new-game').click(); document.querySelector('#overlay-win').style.display='none';">
+          Jugar de nuevo
+        </button>
+      </div>
+    </div>
+
+    <!-- Overlay de Derrota -->
+    <div id="overlay-lose" class="game-overlay" style="display: none">
+      <div class="overlay-content">
+        <h1 class="overlay-title lose">PERDISTE</h1>
+        <p class="overlay-subtitle">El dealer ha ganado esta ronda</p>
+        <button class="btn btn-danger btn-lg mt-3" onclick="document.querySelector('#btn-new-game').click(); document.querySelector('#overlay-lose').style.display='none';">
+          Intentar de nuevo
+        </button>
+      </div>
+    </div>
+
+    <!-- Overlay de Empate -->
+    <div id="overlay-tie" class="game-overlay" style="display: none">
+      <div class="overlay-content">
+        <h1 class="overlay-title tie">EMPATE</h1>
+        <p class="overlay-subtitle">Misma puntuación que el dealer</p>
+        <button class="btn btn-danger btn-lg mt-3" onclick="document.querySelector('#btn-new-game').click(); document.querySelector('#overlay-tie').style.display='none';">
+          Jugar de nuevo
+        </button>
+      </div>
+    </div>
+
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>

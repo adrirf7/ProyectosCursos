@@ -19,7 +19,8 @@ export const btnNewGame = document.querySelector("#btn-new-game"),
   btnTake = document.querySelector("#btn-take"),
   btnStop = document.querySelector("#btn-stop");
 //Puntos
-export const HTMLplayersPoints = document.querySelectorAll("#players-points");
+export const HTMLplayersPoints = document.querySelectorAll("#players-points"),
+  HTMLdealerPoints = document.querySelector(".dealer-points");
 
 //Imagnes de las cartas
 export const cardsDiv = document.querySelectorAll(".div-cards");
